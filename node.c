@@ -40,7 +40,7 @@ void afficher_node(node *arbre){
     if (arbre->gauche != NULL) {
         printf("Gauche racine: %d\n", arbre->gauche->racine);
     } else {
-        printf("Gauche: NULL\n");
+        printf("Gauche: NUL\n");
     }
     if (arbre->droite != NULL) {
         printf("Droite racine: %d\n", arbre->droite->racine);
