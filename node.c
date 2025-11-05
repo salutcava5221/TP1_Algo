@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "node.h"
+#define TAB_MAX 100
 
 node* create_feuille(int racine, int *tab){
     node* feuille = (node*)malloc(sizeof(node));
@@ -26,6 +27,7 @@ node* create_node(int racine, node *gauche, node *droite, int* tab){
     return new_node;
 }
 
+<<<<<<< HEAD
 void afficher_feuille(node *arbre){
     if (arbre == NULL) {
         return;
@@ -48,3 +50,6 @@ void afficher_node(node *arbre){
         printf("Droite: NULL\n");
     }
 }
+=======
+
+>>>>>>> 6cccad13a3e6274a549cc8748981e2f524ee16f3
