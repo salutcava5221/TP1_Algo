@@ -5,11 +5,11 @@ typedef struct node{
     int *tab;
 }node;
 
-void create_feuille(int racine, int *tab);
+node* create_feuille(int racine, int *tab);
 
 void afficher_feuille(node *arbre);
 
-void create_node(int racine, node *gauche, node *droite, int* tab);
+node* create_node(int racine, node *gauche, node *droite, int* tab);
 
 void ajt_element_fin(int **tab, int element);
 
