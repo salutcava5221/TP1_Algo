@@ -4,7 +4,7 @@ typedef struct node{
     int racine;
     struct node* gauche;
     struct node* droite;
-    int *tab;
+    Tableau *tab;
 }node;
 
 

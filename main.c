@@ -11,7 +11,16 @@ int main(){
     //afficher_feuille(t5);
     //afficher_feuille(t6);
 
+    Tableau t;
+    init_tableau(&t);
+
+    ajouter_fin(&t, 1);
+    ajouter_fin(&t, 2);
+    ajouter_fin(&t, 3);
+
+    afficher_tableau(&t);
+
     node *n = create_node(10, t5, t6, NULL);
-    afficher_node(n);
+    //afficher_node(n);
     return 0;
 }

@@ -3,7 +3,7 @@
 #include "node.h"
 #define TAB_MAX 100
 
-node* create_feuille(int racine, int *tab){
+node* create_feuille(int racine, Tableau *tab){
     node* feuille = (node*)malloc(sizeof(node));
     if (feuille == NULL) {
         return NULL;
@@ -15,7 +15,7 @@ node* create_feuille(int racine, int *tab){
     return feuille;
 }
 
-node* create_node(int racine, node *gauche, node *droite, int* tab){
+node* create_node(int racine, node *gauche, node *droite){
     node* new_node = (node*)malloc(sizeof(node));
     if (new_node == NULL) {
         return NULL;
@@ -23,7 +23,7 @@ node* create_node(int racine, node *gauche, node *droite, int* tab){
     new_node->racine = racine;
     new_node->gauche = gauche;
     new_node->droite = droite;
-    new_node->tab = tab;
+    new_node->tab = NULL;
     return new_node;
 }
 
@@ -73,9 +73,15 @@ void afficher_node(node *arbre) {
 
 
 void afficher_tableau(Tableau *t) {
-    printf("Tableau : ");
-    for (int i = 0; i < t->taille; i++) {
-        printf("%d ", t->data[i]);
+    if(t->taille==0){
+        printf("Tableau vide");
     }
-    printf("\n");
+    else{
+        printf("Tableau : ");
+        for (int i = 0; i < t->taille; i++) {
+            printf("%d ", t->data[i]);
+        }
+        printf("\n");
+    }
+
 }
