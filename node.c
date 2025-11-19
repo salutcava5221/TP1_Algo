@@ -41,20 +41,29 @@ void afficher_feuille(node *arbre){
     }
     printf("Feuille racine: %d\n", arbre->racine);
 }
-void afficher_node(node *arbre){
+void afficher_node(node *arbre) { 
     if (arbre == NULL) {
         return;
     }
+
+    // Afficher le noeud courant
     printf("Node racine: %d\n", arbre->racine);
+
+    // Appel recursif sur le fils gauche
     if (arbre->gauche != NULL) {
-        printf("Gauche racine: %d\n", arbre->gauche->racine);
+        printf(" -> Descente gauche depuis %d\n", arbre->racine);
+        afficher_node(arbre->gauche);
     } else {
         printf("Gauche: NULL\n");
     }
+
+    // Appel recursif sur le fils droit
     if (arbre->droite != NULL) {
-        printf("Droite racine: %d\n", arbre->droite->racine);
+        printf(" -> Descente droite depuis %d\n", arbre->racine);
+        afficher_node(arbre->droite);
     } else {
         printf("Droite: NULL\n");
     }
 }
+
 
