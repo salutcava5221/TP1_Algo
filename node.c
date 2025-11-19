@@ -71,6 +71,12 @@ void afficher_node(node *arbre) {
     } else {
         printf("Droite: NULL\n");
     }
+
+    // si on est dans une feuille on affiche son tableau
+    if(arbre->droite==NULL && arbre->gauche==NULL){
+        printf("Tableau de %d : ",arbre->racine);
+        afficher_tableau(arbre->tab);
+    }
 }
 
 
@@ -79,7 +85,6 @@ void afficher_tableau(Tableau *t) {
         printf("Tableau vide");
     }
     else{
-        printf("Tableau : ");
         for (int i = 0; i < t->taille; i++) {
             if(i==0){
                 printf("[ %d, ", t->data[i]);
