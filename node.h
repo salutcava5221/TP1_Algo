@@ -31,6 +31,8 @@ void afficher_tableau(Tableau *t);
 void init_tableau(Tableau *t);
 
 void ajouter_fin(Tableau *t, int valeur);
+void test();
+void test2();
 
 
 

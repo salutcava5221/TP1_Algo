@@ -100,3 +100,38 @@ void afficher_tableau(Tableau *t) {
     }
 
 }
+void test(){
+    Tableau tab1;
+    init_tableau(&tab1);
+    ajouter_fin(&tab1, 10);
+    ajouter_fin(&tab1, 20);
+    ajouter_fin(&tab1, 30);
+    
+    node *feuille1 = create_feuille(5, &tab1);
+    afficher_feuille(feuille1);
+    printf("tableau: ");
+    afficher_tableau(feuille1->tab);
+    printf("\n");
+}
+
+void test2(){
+    Tableau t1;
+    init_tableau(&t1);
+
+    ajouter_fin(&t1, 4);
+    ajouter_fin(&t1, 11);
+
+    Tableau t2;
+    init_tableau(&t2);
+    ajouter_fin(&t2, 2);
+    ajouter_fin(&t2, 3);
+
+    node *feuille1 = create_feuille(5, &t1);
+    node *feuille2 = create_feuille(8, &t2);
+
+
+    node *n = create_node(10, feuille1, feuille2);
+    node *arbre=create_node(10, n, NULL);
+
+    afficher_node(arbre);
+}
