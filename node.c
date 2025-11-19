@@ -45,7 +45,9 @@ void afficher_feuille(node *arbre){
         return;
     }
     printf("Feuille racine: %d\n", arbre->racine);
+    afficher_tableau(arbre->tab);
 }
+
 void afficher_node(node *arbre) { 
     if (arbre == NULL) {
         return;
@@ -79,7 +81,15 @@ void afficher_tableau(Tableau *t) {
     else{
         printf("Tableau : ");
         for (int i = 0; i < t->taille; i++) {
-            printf("%d ", t->data[i]);
+            if(i==0){
+                printf("[ %d, ", t->data[i]);
+            }
+            else if(i+1>=t->taille){
+                printf("%d ]", t->data[i]);
+            }
+            else{
+                printf("%d, ", t->data[i]);
+            }
         }
         printf("\n");
     }

@@ -5,22 +5,27 @@
 
 
 int main(){
-    node *t5 = create_feuille(5, NULL);
-    node *t6 = create_feuille(8, NULL);
 
-    //afficher_feuille(t5);
-    //afficher_feuille(t6);
+    Tableau t1;
+    init_tableau(&t1);
 
-    Tableau t;
-    init_tableau(&t);
+    ajouter_fin(&t1, 4);
+    ajouter_fin(&t1, 11);
 
-    ajouter_fin(&t, 1);
-    ajouter_fin(&t, 2);
-    ajouter_fin(&t, 3);
+    Tableau t2;
+    init_tableau(&t2);
+    ajouter_fin(&t2, 2);
+    ajouter_fin(&t2, 3);
 
-    afficher_tableau(&t);
+    node *t5 = create_feuille(5, &t1);
+    node *t6 = create_feuille(8, &t2);
 
-    node *n = create_node(10, t5, t6, NULL);
+    afficher_feuille(t5);
+    afficher_feuille(t6);
+
+
+
+    node *n = create_node(10, t5, t6);
     //afficher_node(n);
     return 0;
 }

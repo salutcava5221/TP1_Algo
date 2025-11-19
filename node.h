@@ -1,5 +1,10 @@
 #define TAB_MAX 100
 
+typedef struct Tableau{
+    int data[TAB_MAX];   // stockage
+    int taille;          // nb d’éléments utilisés
+} Tableau;
+
 typedef struct node{
     int racine;
     struct node* gauche;
@@ -8,22 +13,16 @@ typedef struct node{
 }node;
 
 
-typedef struct {
-    int data[TAB_MAX];   // stockage
-    int taille;          // nb d’éléments utilisés
-} Tableau;
 
-
-
-node* create_feuille(int racine, int *tab);
+node* create_feuille(int racine, Tableau *tab);
 
 void afficher_feuille(node *arbre);
 
-node* create_node(int racine, node *gauche, node *droite, int* tab);
+node* create_node(int racine, node *gauche, node *droite);
 
 void ajt_element_fin(int **tab, int element);
 
-void enveler_racine_node(node *arbre, int **tab);
+void enveler_racine_node(node *arbre, Tableau **tab);
 
 void afficher_node(node *arbre);
 
