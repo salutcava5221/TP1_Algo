@@ -27,14 +27,19 @@ node* create_node(int racine, node *gauche, node *droite, int* tab){
     return new_node;
 }
 
-void ajt_element_fin(int **tab, int element) {
-    int **temp = tab;
-    while (temp != NULL) {
-        temp++;
-    }
-    **temp = element;
-    *(temp + 1) = NULL;
+void init_tableau(Tableau *t) {
+    t->taille = 0;
 }
+
+void ajouter_fin(Tableau *t, int valeur) {
+    if (t->taille >= TAB_MAX) {
+        printf("Erreur : tableau plein\n");
+        return;
+    }
+    t->data[t->taille] = valeur;
+    t->taille++;
+}
+
 void afficher_feuille(node *arbre){
     if (arbre == NULL) {
         return;
@@ -67,3 +72,10 @@ void afficher_node(node *arbre) {
 }
 
 
+void afficher_tableau(Tableau *t) {
+    printf("Tableau : ");
+    for (int i = 0; i < t->taille; i++) {
+        printf("%d ", t->data[i]);
+    }
+    printf("\n");
+}
