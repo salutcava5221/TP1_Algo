@@ -28,13 +28,12 @@ node* create_node(int racine, node *gauche, node *droite, int* tab){
 }
 
 void ajt_element_fin(int **tab, int element) {
-    int *temp = *tab;
-
-    while (*temp != NULL) {
+    int **temp = tab;
+    while (temp != NULL) {
         temp++;
     }
-    *temp = element;
-    *(temp + 1) = NULL; 
+    **temp = element;
+    *(temp + 1) = NULL;
 }
 void afficher_feuille(node *arbre){
     if (arbre == NULL) {
