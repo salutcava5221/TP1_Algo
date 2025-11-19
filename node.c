@@ -45,7 +45,6 @@ void afficher_feuille(node *arbre){
         return;
     }
     printf("Feuille racine: %d\n", arbre->racine);
-    afficher_tableau(arbre->tab);
 }
 
 void afficher_node(node *arbre) { 
