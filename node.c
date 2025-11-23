@@ -3,14 +3,28 @@
 #include "node.h"
 #define TAB_MAX 100
 
-node* create_feuille(int racine, Tableau *tab){
+
+void update_tab(Tableau *tab) {
+    if (tab == NULL || tab->taille <= 0) {
+        return;
+    }
+    // Decale tous les elements vers la gauche
+    for (int i = 1; i < tab->taille; i++) {
+        tab->data[i - 1] = tab->data[i];
+    }
+    tab->taille--;
+}
+
+
+node* create_feuille(Tableau *tab){
     node* feuille = (node*)malloc(sizeof(node));
     if (feuille == NULL) {
         return NULL;
     }
-    feuille->racine = racine;
+    feuille->racine = tab->data[0];
     feuille->gauche = NULL;
     feuille->droite = NULL;
+    update_tab(tab);
     feuille->tab = tab;
     return feuille;
 }
@@ -44,7 +58,7 @@ void afficher_feuille(node *arbre){
     if (arbre == NULL) {
         return;
     }
-    printf("Feuille racine: %d\n", arbre->racine);
+    printf("Feuille : %d\n", arbre->racine);
 }
 
 void afficher_node(node *arbre) { 
@@ -52,29 +66,27 @@ void afficher_node(node *arbre) {
         return;
     }
 
-    // Afficher le noeud courant
-    printf("Node racine: %d\n", arbre->racine);
-
-    // Appel recursif sur le fils gauche
-    if (arbre->gauche != NULL) {
-        printf(" -> Descente gauche depuis %d\n", arbre->racine);
-        afficher_node(arbre->gauche);
-    } else {
-        printf("Gauche: NULL\n");
-    }
-
-    // Appel recursif sur le fils droit
-    if (arbre->droite != NULL) {
-        printf(" -> Descente droite depuis %d\n", arbre->racine);
-        afficher_node(arbre->droite);
-    } else {
-        printf("Droite: NULL\n");
-    }
-
     // si on est dans une feuille on affiche son tableau
     if(arbre->droite==NULL && arbre->gauche==NULL){
+        afficher_feuille(arbre);
         printf("Tableau de %d : ",arbre->racine);
         afficher_tableau(arbre->tab);
+    }
+    else{
+        // Afficher le noeud courant
+        printf("Node racine: %d\n", arbre->racine);
+
+        // Appel recursif sur le fils gauche
+        if (arbre->gauche != NULL) {
+            printf(" -> Descente gauche depuis %d\n", arbre->racine);
+            afficher_node(arbre->gauche);
+        }
+
+        // Appel recursif sur le fils droit
+        if (arbre->droite != NULL) {
+            printf(" -> Descente droite depuis %d\n", arbre->racine);
+            afficher_node(arbre->droite);
+        }
     }
 }
 
@@ -84,18 +96,14 @@ void afficher_tableau(Tableau *t) {
         printf("Tableau vide");
     }
     else{
+        printf("[ ");
         for (int i = 0; i < t->taille; i++) {
-            if(i==0){
-                printf("[ %d, ", t->data[i]);
-            }
-            else if(i+1>=t->taille){
-                printf("%d ]", t->data[i]);
-            }
-            else{
-                printf("%d, ", t->data[i]);
+            printf("%d", t->data[i]);
+            if (i < t->taille - 1) {
+                printf(", ");
             }
         }
-        printf("\n");
+        printf(" ]\n");
     }
 
 }
@@ -109,6 +117,36 @@ void afficher_monotonies(Tableau **tabs, int n) {
     printf("\n");
 }
 
+
+int nb_liste(Tableau* tabs[]) {
+    int count = 0;
+    while (tabs[count] != NULL) {
+        count++;
+    }
+    return count;
+}
+
+
+void fusion_liste(Tableau* tabs[],Tableau* res){
+    int n=nb_liste(tabs);
+
+    node* feuilles[TAB_MAX];
+    for (int i=0; i<n; i++) {
+        feuilles[i] = create_feuille(tabs[i]);
+    }
+    node* arbre;
+    for(int i=0;i<n/2;i++){
+        if(feuilles[i]->racine<feuilles[i+1]->racine){
+            arbre=create_node(feuilles[i]->racine, feuilles[i], feuilles[i+1]);
+        }
+        else{
+            arbre=create_node(feuilles[i+1]->racine, feuilles[i+1], feuilles[i]);
+        }
+    }
+    afficher_node(arbre);
+
+}
+
 void test(){
     Tableau tab1;
     init_tableau(&tab1);
@@ -116,7 +154,7 @@ void test(){
     ajouter_fin(&tab1, 20);
     ajouter_fin(&tab1, 30);
     
-    node *feuille1 = create_feuille(5, &tab1);
+    node *feuille1 = create_feuille(&tab1);
     afficher_feuille(feuille1);
     printf("tableau: ");
     afficher_tableau(feuille1->tab);
@@ -135,8 +173,8 @@ void test2(){
     ajouter_fin(&t2, 2);
     ajouter_fin(&t2, 3);
 
-    node *feuille1 = create_feuille(5, &t1);
-    node *feuille2 = create_feuille(8, &t2);
+    node *feuille1 = create_feuille(&t1);
+    node *feuille2 = create_feuille(&t2);
 
 
     node *n = create_node(10, feuille1, feuille2);
@@ -157,7 +195,7 @@ void test_Q1(){
     ajouter_fin(&t2, 2);
     ajouter_fin(&t2, 3);
 
-    Tableau* tabs[2] = { &t1, &t2 };
+    Tableau* tabs[3] = { &t1, &t2 ,NULL};
 
     // AFFICHAGE DES MONOTONIES D'ENTREE
     afficher_monotonies(tabs, 2);
@@ -166,6 +204,7 @@ void test_Q1(){
     init_tableau(&fusion);
     //appele de la fonction qui trie avec un arbre
 
-    printf("Monotonie fusionnee : ");
-    afficher_tableau(&fusion);
+    //printf("Monotonie fusionnee : ");
+    //afficher_tableau(&fusion);
+    fusion_liste(tabs,&fusion);
 }

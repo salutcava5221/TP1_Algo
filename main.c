@@ -12,5 +12,6 @@ int main(){
     //test2();
     printf("Test Q1\n");
     test_Q1();
+
     return 0;
 }

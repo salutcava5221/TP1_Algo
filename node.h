@@ -13,8 +13,8 @@ typedef struct node{
 }node;
 
 
-
-node* create_feuille(int racine, Tableau *tab);
+void update_tab(Tableau *tab);
+node* create_feuille(Tableau *tab);
 
 void afficher_feuille(node *arbre);
 
@@ -35,6 +35,9 @@ void ajouter_fin(Tableau *t, int valeur);
 void test();
 void test2();
 void test_Q1();
+
+int nb_liste(Tableau* tabs[]);
+void fusion_liste(Tableau* tabs[],Tableau* res);
 
 
 
