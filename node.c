@@ -99,6 +99,16 @@ void afficher_tableau(Tableau *t) {
     }
 
 }
+
+void afficher_monotonies(Tableau **tabs, int n) {
+    printf("Monotonies en entree :\n");
+    for (int i = 0; i < n; i++) {
+        printf("Liste %d : ", i+1);
+        afficher_tableau(tabs[i]);
+    }
+    printf("\n");
+}
+
 void test(){
     Tableau tab1;
     init_tableau(&tab1);
@@ -133,4 +143,29 @@ void test2(){
     node *arbre=create_node(10, n, NULL);
 
     afficher_node(arbre);
+}
+
+void test_Q1(){
+    // LISTES D'ENTREE
+    Tableau t1;
+    init_tableau(&t1);
+    ajouter_fin(&t1, 4);
+    ajouter_fin(&t1, 11);
+
+    Tableau t2;
+    init_tableau(&t2);
+    ajouter_fin(&t2, 2);
+    ajouter_fin(&t2, 3);
+
+    Tableau* tabs[2] = { &t1, &t2 };
+
+    // AFFICHAGE DES MONOTONIES D'ENTREE
+    afficher_monotonies(tabs, 2);
+
+    Tableau fusion;
+    init_tableau(&fusion);
+    //appele de la fonction qui trie avec un arbre
+
+    printf("Monotonie fusionnee : ");
+    afficher_tableau(&fusion);
 }

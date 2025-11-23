@@ -27,12 +27,14 @@ void enveler_racine_node(node *arbre, Tableau **tab);
 void afficher_node(node *arbre);
 
 void afficher_tableau(Tableau *t);
+void afficher_monotonies(Tableau **tabs, int n);
 
 void init_tableau(Tableau *t);
 
 void ajouter_fin(Tableau *t, int valeur);
 void test();
 void test2();
+void test_Q1();
 
 
 
