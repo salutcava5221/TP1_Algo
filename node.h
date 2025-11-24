@@ -37,7 +37,7 @@ void test2();
 void test_Q1();
 
 int nb_liste(Tableau* tabs[]);
-void fusion_liste(Tableau* tabs[],Tableau* res);
+node* fusion_liste(Tableau* tabs[],Tableau* res);
 
 
 

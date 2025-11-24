@@ -127,25 +127,39 @@ int nb_liste(Tableau* tabs[]) {
 }
 
 
-void fusion_liste(Tableau* tabs[],Tableau* res){
-    int n=nb_liste(tabs);
+node* liste_arbre_rec(Tableau* tabs[], int debut, int fin) {
+    // Cas de base : aucune liste
+    if (debut > fin) return NULL;
 
-    node* feuilles[TAB_MAX];
-    for (int i=0; i<n; i++) {
-        feuilles[i] = create_feuille(tabs[i]);
+    // Cas de base : une seule liste
+    if (debut == fin) {
+        return create_feuille(tabs[debut]);
     }
-    node* arbre;
-    for(int i=0;i<n/2;i++){
-        if(feuilles[i]->racine<feuilles[i+1]->racine){
-            arbre=create_node(feuilles[i]->racine, feuilles[i], feuilles[i+1]);
-        }
-        else{
-            arbre=create_node(feuilles[i+1]->racine, feuilles[i+1], feuilles[i]);
-        }
-    }
-    afficher_node(arbre);
 
+    // Diviser en deux moitiés
+    int milieu = (debut + fin) / 2;
+
+    // Construire récursivement les deux sous-arbres
+    node* gauche = liste_arbre_rec(tabs, debut, milieu);
+    node* droite = liste_arbre_rec(tabs, milieu + 1, fin);
+
+    // Déterminer la racine (minimum des deux)
+    int racine = (gauche->racine < droite->racine) ? gauche->racine : droite->racine;
+
+    // Créer le nœud parent
+    return create_node(racine, gauche, droite);
 }
+
+// Fonction principale
+node* liste_arbre(Tableau* tabs[], Tableau* res) {
+    int n = nb_liste(tabs);
+    if (n <= 0) return NULL;
+
+    node* arbre = liste_arbre_rec(tabs, 0, n - 1);
+    afficher_node(arbre);
+    return arbre;
+}
+
 
 void test(){
     Tableau tab1;
@@ -206,5 +220,6 @@ void test_Q1(){
 
     //printf("Monotonie fusionnee : ");
     //afficher_tableau(&fusion);
-    fusion_liste(tabs,&fusion);
+    liste_arbre(tabs,&fusion);
+    afficher_tableau(&fusion);
 }
