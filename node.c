@@ -1,45 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "node.h"
-#define TAB_MAX 100
 
-
-void update_tab(Tableau *tab) {
-    if (tab == NULL || tab->taille <= 0) {
-        return;
-    }
-    // Decale tous les elements vers la gauche
-    for (int i = 1; i < tab->taille; i++) {
-        tab->data[i - 1] = tab->data[i];
-    }
-    tab->taille--;
-}
-
-
-node* create_feuille(Tableau *tab){
-    node* feuille = (node*)malloc(sizeof(node));
-    if (feuille == NULL) {
-        return NULL;
-    }
-    feuille->racine = tab->data[0];
-    feuille->gauche = NULL;
-    feuille->droite = NULL;
-    update_tab(tab);
-    feuille->tab = tab;
-    return feuille;
-}
-
-node* create_node(int racine, node *gauche, node *droite){
-    node* new_node = (node*)malloc(sizeof(node));
-    if (new_node == NULL) {
-        return NULL;
-    }
-    new_node->racine = racine;
-    new_node->gauche = gauche;
-    new_node->droite = droite;
-    new_node->tab = NULL;
-    return new_node;
-}
+/* ------------------------- TABLEAU UTILS ------------------------- */
 
 void init_tableau(Tableau *t) {
     t->taille = 0;
@@ -54,71 +17,56 @@ void ajouter_fin(Tableau *t, int valeur) {
     t->taille++;
 }
 
-void afficher_feuille(node *arbre){
-    if (arbre == NULL) {
+void retire_tab(Tableau *tab) {
+    if (tab==NULL || tab->taille == 0){
         return;
+    } 
+    for (int i = 1; i < tab->taille; i++){
+        tab->data[i-1] = tab->data[i];
     }
-    printf("Feuille : %d\n", arbre->racine);
+    tab->taille--;
 }
-
-void afficher_node(node *arbre) { 
-    if (arbre == NULL) {
-        return;
-    }
-
-    // si on est dans une feuille on affiche son tableau
-    if(arbre->droite==NULL && arbre->gauche==NULL){
-        afficher_feuille(arbre);
-        printf("Tableau de %d : ",arbre->racine);
-        afficher_tableau(arbre->tab);
-    }
-    else{
-        // Afficher le noeud courant
-        printf("Node racine: %d\n", arbre->racine);
-
-        // Appel recursif sur le fils gauche
-        if (arbre->gauche != NULL) {
-            printf(" -> Descente gauche depuis %d\n", arbre->racine);
-            afficher_node(arbre->gauche);
-        }
-
-        // Appel recursif sur le fils droit
-        if (arbre->droite != NULL) {
-            printf(" -> Descente droite depuis %d\n", arbre->racine);
-            afficher_node(arbre->droite);
-        }
-    }
-}
-
 
 void afficher_tableau(Tableau *t) {
-    if(t->taille==0){
-        printf("Tableau vide");
+    if (t==NULL || t->taille == 0) {
+        printf("Tableau vide\n");
+        return;
     }
-    else{
-        printf("[ ");
-        for (int i = 0; i < t->taille; i++) {
-            printf("%d", t->data[i]);
-            if (i < t->taille - 1) {
-                printf(", ");
-            }
-        }
-        printf(" ]\n");
+    printf("[ ");
+    for (int i = 0; i < t->taille; i++) {
+        printf("%d", t->data[i]);
+        if (i < t->taille-1) printf(", ");
     }
-
+    printf(" ]\n");
 }
 
-void afficher_monotonies(Tableau **tabs, int n) {
-    printf("Monotonies en entree :\n");
-    for (int i = 0; i < n; i++) {
-        printf("Liste %d : ", i+1);
-        afficher_tableau(tabs[i]);
+/* ------------------------- NODE CREATION ------------------------- */
+
+node* create_feuille(Tableau *tab) {
+    if (tab==NULL || tab->taille == 0) {
+        return NULL;
     }
-    printf("\n");
+
+    node *f = malloc(sizeof(node));
+    f->racine = tab->data[0];
+    f->gauche = NULL;
+    f->droite = NULL;
+    f->tab = tab;
+    return f;
 }
 
+node* create_node(int racine, node *gauche, node *droite) {
+    node *n = malloc(sizeof(node));
+    n->racine = racine;
+    n->gauche = gauche;
+    n->droite = droite;
+    n->tab = NULL;
+    return n;
+}
 
-int nb_liste(Tableau* tabs[]) {
+/* ------------------------- TAB LISTS UTILS ------------------------- */
+
+int nb_liste(Tableau *tabs[]) {
     int count = 0;
     while (tabs[count] != NULL) {
         count++;
@@ -126,6 +74,37 @@ int nb_liste(Tableau* tabs[]) {
     return count;
 }
 
+// Décale tous les éléments vers la gauche à partir de la position "pos"
+void decaler_gauche(Tableau *tabs[], int pos) {
+    int n = nb_liste(tabs);
+    for (int i = pos; i < n - 1; i++) {
+        tabs[i] = tabs[i + 1];
+    }
+    tabs[n - 1] = NULL; // la dernière case devient vide
+}
+
+// Supprime les listes null dans le tableau de listes
+void compact_tabs(Tableau *tabs[]) {
+    for (int i = 0; i < nb_liste(tabs); i++) {
+        if (tabs[i] == NULL) {
+            decaler_gauche(tabs, i);
+            i--; //car le tableau a perdu une liste
+        }
+    }
+}
+
+//permet de savoir si au moins une des listes du tableau contient au moins une valeur
+int reste_elements(Tableau *tabs[]) {
+    int res=0;
+    for (int i = 0; tabs[i] != NULL; i++) {
+        if (tabs[i]->taille > 0){
+            res= 1;
+        }   
+    }
+    return res;
+}
+
+/* ------------------------- ARBRE RECURSIF ------------------------- */
 
 node* liste_arbre_rec(Tableau* tabs[], int debut, int fin) {
     // Cas de base : aucune liste
@@ -144,82 +123,108 @@ node* liste_arbre_rec(Tableau* tabs[], int debut, int fin) {
     node* droite = liste_arbre_rec(tabs, milieu + 1, fin);
 
     // Déterminer la racine (minimum des deux)
-    int racine = (gauche->racine < droite->racine) ? gauche->racine : droite->racine;
+    int racine;
+    if(gauche->racine < droite->racine){
+        racine=gauche->racine;
+    }
+    else{
+        racine=droite->racine;
+    }
 
     // Créer le nœud parent
     return create_node(racine, gauche, droite);
 }
 
-// Fonction principale
-node* liste_arbre(Tableau* tabs[], Tableau* res) {
+node* liste_arbre(Tableau *tabs[]) {
     int n = nb_liste(tabs);
-    if (n <= 0) return NULL;
-
-    node* arbre = liste_arbre_rec(tabs, 0, n - 1);
-    afficher_node(arbre);
-    return arbre;
+    if (n == 0) return NULL;
+    return liste_arbre_rec(tabs, 0, n-1);
 }
 
+void free_arbre(node *r) {
+    if (!r) return;
+    free_arbre(r->gauche);
+    free_arbre(r->droite);
+    free(r);
+}
 
-void test(){
-    Tableau tab1;
-    init_tableau(&tab1);
-    ajouter_fin(&tab1, 10);
-    ajouter_fin(&tab1, 20);
-    ajouter_fin(&tab1, 30);
-    
-    node *feuille1 = create_feuille(&tab1);
-    afficher_feuille(feuille1);
-    printf("tableau: ");
-    afficher_tableau(feuille1->tab);
+void afficher_node(node *arbre) {
+    if (!arbre) return;
+
+    if (!arbre->gauche && !arbre->droite) {
+        printf("Feuille : %d\n", arbre->racine);
+        printf("Tableau de %d : ", arbre->racine);
+        afficher_tableau(arbre->tab);
+        return;
+    }
+
+    printf("Node racine: %d\n", arbre->racine);
+
+    if (arbre->gauche) {
+        printf(" -> Descente gauche depuis %d\n", arbre->racine);
+        afficher_node(arbre->gauche);
+    }
+    if (arbre->droite) {
+        printf(" -> Descente droite depuis %d\n", arbre->racine);
+        afficher_node(arbre->droite);
+    }
+}
+
+void afficher_monotonies(Tableau *tabs[]) {
+    int n = nb_liste(tabs);
+    printf("Monotonies en entrée :\n");
+    for (int i = 0; i < n; i++) {
+        printf("Liste %d : ", i+1);
+        afficher_tableau(tabs[i]);
+    }
     printf("\n");
 }
 
-void test2(){
-    Tableau t1;
-    init_tableau(&t1);
-
-    ajouter_fin(&t1, 4);
-    ajouter_fin(&t1, 11);
-
-    Tableau t2;
-    init_tableau(&t2);
-    ajouter_fin(&t2, 2);
-    ajouter_fin(&t2, 3);
-
-    node *feuille1 = create_feuille(&t1);
-    node *feuille2 = create_feuille(&t2);
+/* ------------------------- FUSION ------------------------- */
 
 
-    node *n = create_node(10, feuille1, feuille2);
-    node *arbre=create_node(10, n, NULL);
+void fusion_liste(Tableau *listes[], Tableau *resultat) {
+    while (reste_elements(listes)) {
+        node *arbre = liste_arbre(listes);
 
-    afficher_node(arbre);
+        // Prendre la valeur minimale de la racine de l'arbre
+        int valeur_min = arbre->racine;
+        ajouter_fin(resultat, valeur_min);
+
+        // Retirer cette valeur minimale de la liste correspondante
+        for (int i = 0; listes[i] != NULL; i++) {
+            if (listes[i]->taille > 0 && listes[i]->data[0] == valeur_min) {
+                retire_tab(listes[i]);
+                if (listes[i]->taille == 0) {
+                    listes[i] = NULL;  // liste vide, supprimer
+                }
+            }
+        }
+
+        // Déplacer toutes les listes non-nulles à gauche
+        compact_tabs(listes);
+
+        // Libérer l'arbre temporaire
+        free_arbre(arbre);
+    }
 }
 
-void test_Q1(){
-    // LISTES D'ENTREE
-    Tableau t1;
+void test_Q1() {
+    Tableau t1, t2, res;
     init_tableau(&t1);
+    init_tableau(&t2);
+    init_tableau(&res);
+
     ajouter_fin(&t1, 4);
     ajouter_fin(&t1, 11);
 
-    Tableau t2;
-    init_tableau(&t2);
     ajouter_fin(&t2, 2);
     ajouter_fin(&t2, 3);
 
-    Tableau* tabs[3] = { &t1, &t2 ,NULL};
+    Tableau *tabs[3] = { &t1, &t2, NULL };
 
-    // AFFICHAGE DES MONOTONIES D'ENTREE
-    afficher_monotonies(tabs, 2);
+    fusion_liste(tabs, &res);
 
-    Tableau fusion;
-    init_tableau(&fusion);
-    //appele de la fonction qui trie avec un arbre
-
-    //printf("Monotonie fusionnee : ");
-    //afficher_tableau(&fusion);
-    liste_arbre(tabs,&fusion);
-    afficher_tableau(&fusion);
+    printf("Fusion finale : ");
+    afficher_tableau(&res);
 }
