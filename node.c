@@ -93,7 +93,7 @@ void compact_tabs(Tableau *tabs[]) {
     }
 }
 
-//permet de savoir si au moins une des listes du tableau contient au moins une valeur
+//permet de savoir si au moins une des listes du tableau de listes contient au moins une valeur
 int reste_elements(Tableau *tabs[]) {
     int res=0;
     for (int i = 0; tabs[i] != NULL; i++) {
@@ -137,21 +137,27 @@ node* liste_arbre_rec(Tableau* tabs[], int debut, int fin) {
 
 node* liste_arbre(Tableau *tabs[]) {
     int n = nb_liste(tabs);
-    if (n == 0) return NULL;
+    if (n == 0) {
+        return NULL;
+    }
     return liste_arbre_rec(tabs, 0, n-1);
 }
 
-void free_arbre(node *r) {
-    if (!r) return;
-    free_arbre(r->gauche);
-    free_arbre(r->droite);
-    free(r);
+void free_arbre(node *arbre) {
+    if (arbre==NULL){
+        return;
+    } 
+    free_arbre(arbre->gauche);
+    free_arbre(arbre->droite);
+    free(arbre);
 }
 
 void afficher_node(node *arbre) {
-    if (!arbre) return;
+    if (arbre==NULL) {
+        return;
+    }
 
-    if (!arbre->gauche && !arbre->droite) {
+    if (arbre->gauche==NULL && arbre->droite==NULL) {
         printf("Feuille : %d\n", arbre->racine);
         printf("Tableau de %d : ", arbre->racine);
         afficher_tableau(arbre->tab);
@@ -182,7 +188,7 @@ void afficher_monotonies(Tableau *tabs[]) {
 
 /* ------------------------- FUSION ------------------------- */
 
-
+//note:fix si ya deux liste avec meme element debut
 void fusion_liste(Tableau *listes[], Tableau *resultat) {
     while (reste_elements(listes)) {
         node *arbre = liste_arbre(listes);
@@ -204,7 +210,7 @@ void fusion_liste(Tableau *listes[], Tableau *resultat) {
         // Déplacer toutes les listes non-nulles à gauche
         compact_tabs(listes);
 
-        // Libérer l'arbre temporaire
+        // Libérer l'arbre
         free_arbre(arbre);
     }
 }
