@@ -219,7 +219,6 @@ void test_Q1() {
     Tableau t1, t2, res;
     init_tableau(&t1);
     init_tableau(&t2);
-    init_tableau(&res);
 
     ajouter_fin(&t1, 4);
     ajouter_fin(&t1, 11);
@@ -229,8 +228,10 @@ void test_Q1() {
 
     Tableau *tabs[3] = { &t1, &t2, NULL };
 
+    init_tableau(&res);// notre resultat
+
     fusion_liste(tabs, &res);
 
-    printf("Fusion finale : ");
+    printf("Apres fusion : ");
     afficher_tableau(&res);
 }
