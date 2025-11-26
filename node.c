@@ -64,7 +64,7 @@ node* create_node(int racine, node *gauche, node *droite) {
     return n;
 }
 
-/* ------------------------- TAB LISTS UTILS ------------------------- */
+/* ------------------------- TAB Liste Utilitaire ------------------------- */
 
 int nb_liste(Tableau *tabs[]) {
     int count = 0;
@@ -74,35 +74,6 @@ int nb_liste(Tableau *tabs[]) {
     return count;
 }
 
-// Décale tous les éléments vers la gauche à partir de la position "pos"
-void decaler_gauche(Tableau *tabs[], int pos) {
-    int n = nb_liste(tabs);
-    for (int i = pos; i < n - 1; i++) {
-        tabs[i] = tabs[i + 1];
-    }
-    tabs[n - 1] = NULL; // la dernière case devient vide
-}
-
-// Supprime les listes null dans le tableau de listes
-void compact_tabs(Tableau *tabs[]) {
-    for (int i = 0; i < nb_liste(tabs); i++) {
-        if (tabs[i] == NULL) {
-            decaler_gauche(tabs, i);
-            i--; //car le tableau a perdu une liste
-        }
-    }
-}
-
-//permet de savoir si au moins une des listes du tableau de listes contient au moins une valeur
-int reste_elements(Tableau *tabs[]) {
-    int res=0;
-    for (int i = 0; tabs[i] != NULL; i++) {
-        if (tabs[i]->taille > 0){
-            res= 1;
-        }   
-    }
-    return res;
-}
 
 /* ------------------------- ARBRE RECURSIF ------------------------- */
 
@@ -122,18 +93,24 @@ node* liste_arbre_rec(Tableau* tabs[], int debut, int fin) {
     node* gauche = liste_arbre_rec(tabs, debut, milieu);
     node* droite = liste_arbre_rec(tabs, milieu + 1, fin);
 
-    // Déterminer la racine (minimum des deux)
+    // Déterminer la racine (minimum des deux), en vérifiant NULL
     int racine;
-    if(gauche->racine < droite->racine){
-        racine=gauche->racine;
+    if (gauche != NULL && droite != NULL) { 
+        if (gauche->racine <= droite->racine) racine = gauche->racine; 
+        else racine = droite->racine; 
     }
-    else{
-        racine=droite->racine;
+
+    else if (gauche != NULL) {
+        racine = gauche->racine;
+    }
+    else if (droite != NULL) {
+        racine = droite->racine;
     }
 
     // Créer le nœud parent
     return create_node(racine, gauche, droite);
 }
+
 
 node* liste_arbre(Tableau *tabs[]) {
     int n = nb_liste(tabs);
@@ -178,7 +155,7 @@ void afficher_node(node *arbre) {
 
 void afficher_monotonies(Tableau *tabs[]) {
     int n = nb_liste(tabs);
-    printf("Monotonies en entrée :\n");
+    printf("Monotonies en entree :\n");
     for (int i = 0; i < n; i++) {
         printf("Liste %d : ", i+1);
         afficher_tableau(tabs[i]);
@@ -186,33 +163,120 @@ void afficher_monotonies(Tableau *tabs[]) {
     printf("\n");
 }
 
+//permet de savoir si au moins une des listes du tableau de listes contient au moins une valeur
+int reste_elements(Tableau *tabs[], int n_initial) {
+    for (int i = 0; i < n_initial; i++) {
+        if (tabs[i] != NULL && tabs[i]->taille > 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 /* ------------------------- FUSION ------------------------- */
 
-//note:fix si ya deux liste avec meme element debut
 void fusion_liste(Tableau *listes[], Tableau *resultat) {
-    while (reste_elements(listes)) {
-        node *arbre = liste_arbre(listes);
+    //le nombre initial de listes
+    int n_initial = nb_liste(listes);
+    
+    while (reste_elements(listes, n_initial)) {
 
-        // Prendre la valeur minimale de la racine de l'arbre
+        //Recupere les listes non vides pour l'arbre
+        Tableau *non_vides[TAB_MAX];
+        int count = 0;
+        //recupere uniquement les listes non vide
+        for (int i = 0; i < n_initial; i++) {
+            //si la liste courant nes pas null et vide alors on l'ajoute a notre tableau non vide
+            if (listes[i] != NULL && listes[i]->taille > 0) {
+                non_vides[count] = listes[i];
+                count++;
+            }
+        }
+        non_vides[count] = NULL;
+        
+        // Si aucune liste non vide, sortir
+        if (count == 0) break;
+        
+        // Construire l'arbre avec les listes non vides
+        node *arbre = liste_arbre(non_vides);
         int valeur_min = arbre->racine;
         ajouter_fin(resultat, valeur_min);
 
-        // Retirer cette valeur minimale de la liste correspondante
-        for (int i = 0; listes[i] != NULL; i++) {
-            if (listes[i]->taille > 0 && listes[i]->data[0] == valeur_min) {
+        // Supprimer l'élément d'une seule liste
+        int supprimer = 0;
+        for (int i = 0; i < n_initial && !supprimer; i++) {
+            if (listes[i] != NULL && 
+                listes[i]->taille > 0 && 
+                listes[i]->data[0] == valeur_min) {
+                
                 retire_tab(listes[i]);
+                supprimer = 1;
+                
                 if (listes[i]->taille == 0) {
-                    listes[i] = NULL;  // liste vide, supprimer
+                    listes[i] = NULL;
                 }
             }
         }
 
-        // Déplacer toutes les listes non-nulles à gauche
-        compact_tabs(listes);
-
-        // Libérer l'arbre
         free_arbre(arbre);
     }
+}
+
+void demo_algo_fonctionnel() {
+    printf("=== DEMONSTRATION ALGORITHME FONCTIONNEL ===\n\n");
+    
+    // Test 1: Cas général
+    printf("Test1 CAS GENERAL\n");
+    Tableau t1, t2, t3, t4, res1;
+    init_tableau(&t1); init_tableau(&t2); init_tableau(&t3); init_tableau(&t4); init_tableau(&res1);
+    
+    ajouter_fin(&t1, 1); ajouter_fin(&t1, 5); ajouter_fin(&t1, 9);
+    ajouter_fin(&t2, 2); ajouter_fin(&t2, 6); ajouter_fin(&t2, 10);
+    ajouter_fin(&t3, 3); ajouter_fin(&t3, 7); ajouter_fin(&t3, 11);
+    ajouter_fin(&t4, 4); ajouter_fin(&t4, 8); ajouter_fin(&t4, 12);
+    
+    Tableau *tabs1[5] = {&t1, &t2, &t3, &t4, NULL};
+    
+    printf("Entree: ");
+    afficher_monotonies(tabs1);
+    fusion_liste(tabs1, &res1);
+    printf("Sortie: "); afficher_tableau(&res1);
+    
+    // Test 2: Listes de tailles différentes
+    printf("\nTest2 LISTES DE TAILLES DIFFERENTES\n");
+    Tableau t5, t6, t7, res2;
+    init_tableau(&t5); init_tableau(&t6); init_tableau(&t7); init_tableau(&res2);
+    
+    ajouter_fin(&t5, 1); ajouter_fin(&t5, 6);
+    ajouter_fin(&t6, 2); ajouter_fin(&t6, 4); ajouter_fin(&t6, 7); ajouter_fin(&t6, 8);
+    ajouter_fin(&t7, 3); ajouter_fin(&t7, 5);
+    
+    Tableau *tabs2[4] = {&t5, &t6, &t7, NULL};
+    
+    printf("Entree: ");
+    afficher_monotonies(tabs2);
+    fusion_liste(tabs2, &res2);
+    printf("Sortie: "); afficher_tableau(&res2);
+    
+    // Test 3: Visualisation de l'arbre
+    printf("\nTest3 VISUALISATION ARBRE\n");
+    Tableau t8, t9, res3;
+    init_tableau(&t8); init_tableau(&t9);
+    init_tableau(&res3);
+    
+    ajouter_fin(&t8, 3); ajouter_fin(&t8, 7);
+    ajouter_fin(&t9, 1); ajouter_fin(&t9, 5);
+    
+    Tableau *tabs3[3] = {&t8, &t9, NULL};
+    node *arbre = liste_arbre(tabs3);
+    afficher_monotonies(tabs3);
+    printf("Arbre :\n");
+    afficher_node(arbre);
+    
+    fusion_liste(tabs3,&res3);
+    printf("Resultat:");
+    afficher_tableau(&res3);
+    free_arbre(arbre);
 }
 
 void test_Q1() {
@@ -223,15 +287,16 @@ void test_Q1() {
     ajouter_fin(&t1, 4);
     ajouter_fin(&t1, 11);
 
-    ajouter_fin(&t2, 2);
-    ajouter_fin(&t2, 3);
+    ajouter_fin(&t2, 4);
+    ajouter_fin(&t2, 13);
 
     Tableau *tabs[3] = { &t1, &t2, NULL };
+    node *arbre = liste_arbre(tabs);
 
     init_tableau(&res);// notre resultat
+    afficher_node(arbre);
 
     fusion_liste(tabs, &res);
-
     printf("Apres fusion : ");
     afficher_tableau(&res);
 }

@@ -31,7 +31,7 @@ void fusion_liste(Tableau *tabs[], Tableau *res);
 
 /* Tools */
 int nb_liste(Tableau *tabs[]);
-int reste_elements(Tableau *tabs[]);
+int reste_elements(Tableau *tabs[], int n_initial);
 void compact_tabs(Tableau *tabs[]);
 void free_arbre(node *r);
 
@@ -39,4 +39,5 @@ void free_arbre(node *r);
 void afficher_node(node *arbre);
 void afficher_monotonies(Tableau *tabs[]);
 void test_Q1();
+void demo_algo_fonctionnel();
 #endif

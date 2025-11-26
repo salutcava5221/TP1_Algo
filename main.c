@@ -10,8 +10,9 @@ int main(){
     //test();
     //printf("TEST2\n");
     //test2();
-    printf("Test Q1\n");
-    test_Q1();
+    //printf("Test Q1\n");
+    //test_Q1();
+    demo_algo_fonctionnel();
 
     return 0;
 }
