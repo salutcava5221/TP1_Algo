@@ -93,7 +93,7 @@ node* liste_arbre_rec(Tableau* tabs[], int debut, int fin) {
     node* gauche = liste_arbre_rec(tabs, debut, milieu);
     node* droite = liste_arbre_rec(tabs, milieu + 1, fin);
 
-    // Déterminer la racine (minimum des deux), en vérifiant NULL
+    // Déterminer la racine (minimum des deux arbres creer), en vérifiant NULL
     int racine;
     if (gauche != NULL && droite != NULL) { 
         if (gauche->racine <= droite->racine) racine = gauche->racine; 
@@ -217,16 +217,17 @@ void fusion_liste(Tableau *listes[], Tableau *resultat) {
                 }
             }
         }
-
+        //voir levolution du resultat et de l'arbre
+        printf("\narbre courant:\n");
+        afficher_node(arbre);
+        printf("tableau resultat courant:");
+        afficher_tableau(resultat);
         free_arbre(arbre);
     }
 }
-
-void demo_algo_fonctionnel() {
-    printf("=== DEMONSTRATION ALGORITHME FONCTIONNEL ===\n\n");
-    
-    // Test 1: Cas général
-    printf("Test1 CAS GENERAL\n");
+void test_grande_liste(){
+    // Test: Cas avec grande listes
+    printf("\nTest CAS AVEC GRANDE LISTES\n");
     Tableau t1, t2, t3, t4, res1;
     init_tableau(&t1); init_tableau(&t2); init_tableau(&t3); init_tableau(&t4); init_tableau(&res1);
     
@@ -236,14 +237,21 @@ void demo_algo_fonctionnel() {
     ajouter_fin(&t4, 4); ajouter_fin(&t4, 8); ajouter_fin(&t4, 12);
     
     Tableau *tabs1[5] = {&t1, &t2, &t3, &t4, NULL};
-    
+    node *arbre = liste_arbre(tabs1);
+
     printf("Entree: ");
     afficher_monotonies(tabs1);
+    printf("\n-------Arbre initiale :----------\n");
+    afficher_node(arbre);
+    printf("\n-----------Debut de la fusion--------------------\n");
     fusion_liste(tabs1, &res1);
     printf("Sortie: "); afficher_tableau(&res1);
-    
-    // Test 2: Listes de tailles différentes
-    printf("\nTest2 LISTES DE TAILLES DIFFERENTES\n");
+
+    free_arbre(arbre);
+}
+void test_taille_different(){
+
+    printf("\nTest LISTES DE TAILLES DIFFERENTES\n");
     Tableau t5, t6, t7, res2;
     init_tableau(&t5); init_tableau(&t6); init_tableau(&t7); init_tableau(&res2);
     
@@ -254,12 +262,19 @@ void demo_algo_fonctionnel() {
     Tableau *tabs2[4] = {&t5, &t6, &t7, NULL};
     
     printf("Entree: ");
+    node *arbre = liste_arbre(tabs2);
     afficher_monotonies(tabs2);
+    printf("\n-------Arbre initiale :----------\n");
+    afficher_node(arbre);
+    printf("\n-----------Debut de la fusion--------------------\n");
     fusion_liste(tabs2, &res2);
     printf("Sortie: "); afficher_tableau(&res2);
-    
-    // Test 3: Visualisation de l'arbre
-    printf("\nTest3 VISUALISATION ARBRE\n");
+
+    free_arbre(arbre);
+}
+void test_basique(){
+
+    printf("\nTest Cas simple\n");
     Tableau t8, t9, res3;
     init_tableau(&t8); init_tableau(&t9);
     init_tableau(&res3);
@@ -270,13 +285,25 @@ void demo_algo_fonctionnel() {
     Tableau *tabs3[3] = {&t8, &t9, NULL};
     node *arbre = liste_arbre(tabs3);
     afficher_monotonies(tabs3);
-    printf("Arbre :\n");
+    printf("\n-------Arbre initiale :----------\n");
     afficher_node(arbre);
-    
+    printf("\n-----------Debut de la fusion--------------------\n");
+
     fusion_liste(tabs3,&res3);
     printf("Resultat:");
     afficher_tableau(&res3);
+
     free_arbre(arbre);
+}
+void demo_algo_fonctionnel() {
+    printf("=== DEMONSTRATION ALGORITHME FONCTIONNEL ===\n\n");
+    
+    //test_basique();
+
+    //test_grande_liste();
+    
+    //test_taille_different();
+
 }
 
 void test_Q1() {
