@@ -298,7 +298,7 @@ void test_basique(){
 void demo_algo_fonctionnel() {
     printf("=== DEMONSTRATION ALGORITHME FONCTIONNEL ===\n\n");
     
-    //test_basique();
+    test_basique();
 
     //test_grande_liste();
     
